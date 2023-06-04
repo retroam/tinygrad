@@ -71,7 +71,7 @@ def _padding(X, pads=None, auto_pad="NOTSET", axes=None, constant_value=0.):
   if pads is None: return X
   np_pads = _format_padding(pads, ndims=len(X.shape), axes=axes)
   zero_padded = X.pad(tuple(np_pads))
-  constant_padder = Tensor(np.pad(np.zeros(X.shape), np_pads, constant_values=constant_value), dtype=X.dtype)
+  constant_padder = Tensor(np.pad(np.zeros(X.shape, dtype=np.float32), np_pads, constant_values=constant_value), dtype=X.dtype)
   return zero_padded + constant_padder
 
 def Pad(x: Tensor, pads: Union[Tensor, Tuple[int, ...]], constant_value: Tensor=None, axes: Tensor=None, mode="constant", value: float=0.):
@@ -152,8 +152,10 @@ def Softmax_1(input, axis=1): return input.softmax(axis)
 def Softmax_13(input, axis=-1): return input.softmax(axis)
 Softmax = {1: Softmax_1, 13: Softmax_13}   # Softmax default axis changed
 def LogSoftmax(input, axis=-1): return input.log_softmax(axis)
-def Clip(input, min=-3.4e38, max=3.4e38): return input.clip(min, max)
-
+def Clip(input, min=None, max=None):
+  if min is None: min = -3.4e38
+  if max is None: max = 3.4e38
+  return input.clip(min, max)
 
 def Sin(x): return x.sin()
 def Cos(x): return x.cos()
